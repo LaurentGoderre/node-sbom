@@ -1,0 +1,18 @@
+FROM node:20-alpine
+
+WORKDIR /home/node/app
+
+COPY yarn/package.json yarn/yarn.lock  yarn/index.js yarn/webpack.config.js ./
+
+COPY yarn/src/index.js src/index.js
+
+RUN set -ex; \
+    yarn install; \
+    yarn exec webpack; \
+    rm -rf node_modules; \
+    yarn install --production;
+
+# Exclude node package manager packages
+RUN rm -rf /usr/local/lib/node_modules
+
+CMD ["node", "./index.js"]
